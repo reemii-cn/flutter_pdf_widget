@@ -55,7 +55,7 @@ class _MyAppState extends State<MyApp> {
         ),
         body: Stack(children: <Widget>[
           UIReaderPDFWidget(onActivityIndicatorWidgetCreated: _onActivityIndicatorControllerCreated,),
-          FlatButton(onPressed: (){ controller.edit(); controller.changeLineColor(123456); controller.changeLineSize(10); },child: Text('click'),),
+          FlatButton(onPressed: (){ controller.edit(); controller.changeLineColor("#FF000000"); controller.changeLineSize(10); },child: Text('click'),),
           Padding(
             padding: const EdgeInsets.only(left:100.0),
             child: FlatButton(onPressed: (){  controller.changeLineSize(0); },child: Text('changeWidth'),),

@@ -10,6 +10,7 @@ typedef void PdfVieControllerwWidgetCreatedCallback(
 
 class UIReaderPDFWidget extends StatefulWidget {
   final PdfVieControllerwWidgetCreatedCallback onActivityIndicatorWidgetCreated;
+
   // pdf路径参数
   final param;
   final CallFlutterLocal callFlutterLocal;
@@ -64,8 +65,12 @@ class _UIReaderPDFWidgetState extends State<UIReaderPDFWidget> {
         creationParams: widget.param,
       );
     }
-    return Text(
-        '$defaultTargetPlatform is not yet supported by the activity_indicator plugin');
+    return AndroidView(
+      viewType: _viewType,
+      onPlatformViewCreated: _onPlatformViewCreated,
+      creationParamsCodec: new StandardMessageCodec(),
+      creationParams: widget.param,
+    );
   }
 
   void _onPlatformViewCreated(int id) {
