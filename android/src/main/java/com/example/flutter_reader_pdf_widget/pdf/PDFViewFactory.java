@@ -18,6 +18,6 @@ public class PDFViewFactory extends PlatformViewFactory {
 
     @Override
     public PlatformView create(Context context, int id, Object o) {
-        return new ReeMiiPDFView(context, messenger, id);
+        return new ReeMiiPDFView(context, messenger, id, o);
     }
 }

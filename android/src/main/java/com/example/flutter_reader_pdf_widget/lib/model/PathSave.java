@@ -1,4 +1,4 @@
-package com.github.barteksc.pdfviewer.model;
+package com.example.flutter_reader_pdf_widget.lib.model;
 
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -9,9 +9,13 @@ import android.graphics.PorterDuffXfermode;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class PathSave {
+    private final String TAG = PathSave.class.getSimpleName();
+
     public PointF start;
 
     public PointF end;
@@ -34,6 +38,61 @@ public class PathSave {
         start = new PointF(0f, 0f);
         end = new PointF(0f, 0f);
         moves = new ArrayList<>();
+    }
+
+    public PathSave(Map<String, Object> params) {
+        paintColor = (int) params.get("paintColor");
+        paintWidth = (int) params.get("paintWidth");
+        mStandardH = (float) params.get("mStandardH");
+        mStandardW = (float) params.get("mStandardW");
+        isEraser = (boolean) params.get("isEraser");
+        oX = (float) params.get("oX");
+        oY = (float) params.get("oY");
+        Map<String, Object> startMap = (Map<String, Object>) params.get("start");
+        Map<String, Object> endMap = (Map<String, Object>) params.get("end");
+        start = new PointF((float) startMap.get("dx"), (float) startMap.get("dy"));
+        end = new PointF((float) endMap.get("dx"), (float) endMap.get("dy"));
+    }
+
+    public Map<String, Object> toMap() {
+        Map<String, Object> params = new HashMap<>();
+
+        params.put("paintColor", paintColor);
+        params.put("paintWidth", paintWidth);
+        params.put("mStandardH", mStandardH);
+        params.put("mStandardW", mStandardW);
+        params.put("isEraser", isEraser);
+        params.put("oX", oX);
+        params.put("oY", oY);
+        Map<String, Object> start = new HashMap<>();
+        start.put("dx", this.start.x);
+        start.put("dy", this.start.y);
+        params.put("start", start);
+
+        Map<String, Object> end = new HashMap<>();
+        end.put("dx", this.end.x);
+        end.put("dy", this.end.y);
+        params.put("end", end);
+
+        Map<String, Object> m;
+        List<Map<String, Object>> moves = new ArrayList<>();
+        for (TwoPointF tfboy: this.moves) {
+            m = new HashMap<>();
+            m.put("dx", tfboy.p1.x);
+            m.put("dy", tfboy.p1.y);
+            moves.add(m);
+
+            m = new HashMap<>();
+            m.put("dx", tfboy.p2.x);
+            m.put("dy", tfboy.p2.y);
+            moves.add(m);
+        }
+
+        params.put("moves", moves);
+
+        Log.v(TAG, "toMap");
+        Log.v(TAG, params.toString());
+        return params;
     }
 
     public void initDrawArea(float width, float height) {
@@ -97,7 +156,7 @@ public class PathSave {
      */
     public Path generatePath(float zoom, float zoomW, float zoomH) {
         Path path = new Path();
-        path.moveTo(start.x * zoom * zoomW , start.y * zoom * zoomH);
+        path.moveTo(start.x * zoom * zoomW, start.y * zoom * zoomH);
 
         for (TwoPointF next : moves) {
             path.quadTo(next.p1.x * zoom * zoomW,
@@ -105,7 +164,7 @@ public class PathSave {
                     next.p2.x * zoom * zoomW,
                     next.p2.y * zoom * zoomH);
         }
-        path.lineTo(end.x * zoom * zoomW , end.y * zoom * zoomH);
+        path.lineTo(end.x * zoom * zoomW, end.y * zoom * zoomH);
 
         return path;
     }

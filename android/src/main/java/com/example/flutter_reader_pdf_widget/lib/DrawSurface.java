@@ -1,4 +1,4 @@
-package com.github.barteksc.pdfviewer;
+package com.example.flutter_reader_pdf_widget.lib;
 
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -17,14 +17,15 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
 
-import com.github.barteksc.pdfviewer.model.PathSave;
-import com.github.barteksc.pdfviewer.model.TwoPointF;
+import com.example.flutter_reader_pdf_widget.lib.model.PathSave;
+import com.example.flutter_reader_pdf_widget.lib.model.TwoPointF;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -41,6 +42,8 @@ public class DrawSurface extends SurfaceView {
 
     private List<PathSave> mListRedoPath;
     private List<PathSave> mListPathSave;
+
+    final Gson mGson = new Gson();
 
     private int W;
     private int H;
@@ -274,9 +277,12 @@ public class DrawSurface extends SurfaceView {
         paint.setColor(mLineColor);
     }
 
-    public boolean enableEraser() {
-        isEraserMode = !isEraserMode;
-        return isEraserMode;
+    public void enableEraser() {
+        isEraserMode = true;
+    }
+
+    public void disableEraser() {
+        isEraserMode = false;
     }
 
     public void save() {
@@ -306,6 +312,14 @@ public class DrawSurface extends SurfaceView {
 
     public String getDrawHistory() {
         return new Gson().toJson(mListPathSave);
+    }
+
+    public List<Map<String, Object>> getDrawHistoryList() {
+        List<Map<String, Object>> result = new ArrayList<>();
+        for (PathSave ps: mListPathSave) {
+            result.add(ps.toMap());
+        }
+        return result;
     }
 
     private boolean hasTouchLine(PathSave p, float x, float y) {
