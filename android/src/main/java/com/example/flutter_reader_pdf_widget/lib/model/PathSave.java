@@ -59,12 +59,12 @@ public class PathSave {
         Map<String, Object> startMap = (Map<String, Object>) params.get("start");
         Map<String, Object> endMap = (Map<String, Object>) params.get("end");
         start = new PointF(
-                startMap.get("dx") == null ? 0F : (int) startMap.get("dx"),
-                startMap.get("dy") == null ? 0F : (int) startMap.get("dy")
+                startMap.get("dx") == null ? 0F : (int) (double) startMap.get("dx"),
+                startMap.get("dy") == null ? 0F : (int) (double) startMap.get("dy")
         );
         end = new PointF(
-                endMap.get("dx") == null ? 0F : (int) endMap.get("dx"),
-                endMap.get("dy") == null ? 0F : (int) endMap.get("dy")
+                endMap.get("dx") == null ? 0F : (int) (double) endMap.get("dx"),
+                endMap.get("dy") == null ? 0F : (int) (double) endMap.get("dy")
         );
 
         List<Map<String, Object>> moves = (List<Map<String, Object>>) params.get("moves");
