@@ -14,6 +14,7 @@ import com.example.flutter_reader_pdf_widget.lib.PDFView;
 import com.example.flutter_reader_pdf_widget.lib.listener.OnDrawListener;
 import com.example.flutter_reader_pdf_widget.lib.listener.OnPageChangeListener;
 import com.example.flutter_reader_pdf_widget.lib.model.PathSave;
+import com.google.gson.Gson;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -49,6 +50,7 @@ public class ReeMiiPDFView implements PlatformView, MethodChannel.MethodCallHand
     private boolean isDrawMode = false;
 
     private String mPDFFilePath;
+    private Gson mGson = new Gson();
 
     public ReeMiiPDFView(Context context, BinaryMessenger messenger, int id, Object o) {
         this.mContext = context;
@@ -103,7 +105,25 @@ public class ReeMiiPDFView implements PlatformView, MethodChannel.MethodCallHand
                     @Override
                     public void onPageChanged(int page, int pageCount) {
                         Log.v(TAG, "beforePageChange " + page);
-                        mChannel.invokeMethod(METHOD_GET_LINE_PATH, mDrawView.getDrawHistoryList());
+                        mChannel.invokeMethod(METHOD_GET_LINE_PATH, mDrawView.getDrawHistoryList(), new MethodChannel.Result() {
+                            @Override
+                            public void success(Object o) {
+                                Log.v(TAG, "invokeMethod success " + METHOD_GET_LINE_PATH);
+
+                            }
+
+                            @Override
+                            public void error(String s, String s1, Object o) {
+                                Log.v(TAG, "invokeMethod error " + METHOD_GET_LINE_PATH);
+                                Log.v(TAG, "invokeMethod error " + s);
+                                Log.v(TAG, "invokeMethod error " + s1);
+                            }
+
+                            @Override
+                            public void notImplemented() {
+                                Log.v(TAG, "invokeMethod notImplemented " + METHOD_GET_LINE_PATH);
+                            }
+                        });
                     }
                 })
                 .onPageChange(new OnPageChangeListener() {
@@ -124,11 +144,14 @@ public class ReeMiiPDFView implements PlatformView, MethodChannel.MethodCallHand
                                     Log.e("PDF-Plugin", m.toString());
                                     line.add(new PathSave(m));
                                 }
+                                mDrawView.setDrawHistory(mGson.toJson(line));
                             }
 
                             @Override
                             public void error(String s, String s1, Object o) {
                                 Log.v(TAG, "invokeMethod error " + METHOD_GET_CURRENT_PAGE);
+                                Log.v(TAG, "invokeMethod error " + s);
+                                Log.v(TAG, "invokeMethod error " + s1);
                             }
 
                             @Override

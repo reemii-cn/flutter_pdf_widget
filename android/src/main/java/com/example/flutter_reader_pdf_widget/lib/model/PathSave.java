@@ -41,17 +41,46 @@ public class PathSave {
     }
 
     public PathSave(Map<String, Object> params) {
-        paintColor = (int) params.get("paintColor");
-        paintWidth = (int) params.get("paintWidth");
-        mStandardH = (float) params.get("mStandardH");
-        mStandardW = (float) params.get("mStandardW");
+        Log.v(TAG, "fromMap");
+        Log.v(TAG, params.toString());
+        String color = (String) params.get("paintColor");
+        if (color.startsWith("-")) {
+            paintColor = Color.parseColor("#".concat(color.substring(1)));
+        } else {
+            paintColor = Color.BLACK;
+        }
+
+        paintWidth = (int) (double) params.get("paintWidth");
+        mStandardH = (float) (double) params.get("mStandardH");
+        mStandardW = (float) (double) params.get("mStandardW");
         isEraser = (boolean) params.get("isEraser");
-        oX = (float) params.get("oX");
-        oY = (float) params.get("oY");
+        oX = params.get("oX") == null ? 0F : (float) params.get("oX");
+        oY = params.get("oY") == null ? 0F : (float) params.get("oY");
         Map<String, Object> startMap = (Map<String, Object>) params.get("start");
         Map<String, Object> endMap = (Map<String, Object>) params.get("end");
-        start = new PointF((float) startMap.get("dx"), (float) startMap.get("dy"));
-        end = new PointF((float) endMap.get("dx"), (float) endMap.get("dy"));
+        start = new PointF(
+                startMap.get("dx") == null ? 0F : (int) startMap.get("dx"),
+                startMap.get("dy") == null ? 0F : (int) startMap.get("dy")
+        );
+        end = new PointF(
+                endMap.get("dx") == null ? 0F : (int) endMap.get("dx"),
+                endMap.get("dy") == null ? 0F : (int) endMap.get("dy")
+        );
+
+        List<Map<String, Object>> moves = (List<Map<String, Object>>) params.get("moves");
+        TwoPointF tpf;
+        this.moves = new ArrayList<>();
+
+        for (int pos = 0, size = moves.size(); pos < size; ) {
+            tpf = new TwoPointF(
+                    (float) (double) moves.get(pos).get("dx"),
+                    (float) (double) moves.get(pos).get("dy"),
+                    (float) (double) moves.get(pos + 1).get("dx"),
+                    (float) (double) moves.get(pos + 1).get("dy")
+            );
+            pos += 2;
+            this.moves.add(tpf);
+        }
     }
 
     public Map<String, Object> toMap() {
@@ -76,7 +105,7 @@ public class PathSave {
 
         Map<String, Object> m;
         List<Map<String, Object>> moves = new ArrayList<>();
-        for (TwoPointF tfboy: this.moves) {
+        for (TwoPointF tfboy : this.moves) {
             m = new HashMap<>();
             m.put("dx", tfboy.p1.x);
             m.put("dy", tfboy.p1.y);
