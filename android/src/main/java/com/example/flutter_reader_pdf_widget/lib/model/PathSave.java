@@ -49,7 +49,7 @@ public class PathSave {
         } else if (color.startsWith("#")) {
             paintColor = Color.parseColor(color);
         } else {
-            paintColor = Color.BLACK;
+            paintColor = Color.parseColor("#".concat(color));
         }
 
         paintWidth = (int) (double) params.get("paintWidth");
@@ -89,7 +89,7 @@ public class PathSave {
         Map<String, Object> params = new HashMap<>();
 
         Log.v(TAG, String.format("#%06X", (0xFFFFFF & paintColor)));
-        params.put("paintColor", String.format("#%06X", (0xFFFFFF & paintColor)));
+        params.put("paintColor", String.format("%06X", (0xFFFFFF & paintColor)));
         params.put("paintWidth", paintWidth);
         params.put("mStandardH", mStandardH);
         params.put("mStandardW", mStandardW);
