@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -45,6 +46,9 @@ class _UIReaderPDFWidgetState extends State<UIReaderPDFWidget> {
           return await widget.callFlutterLocal.getLinePath(call.arguments);
         case 'getCurrentPage':
           print(call.arguments);
+          if (Platform.isAndroid)
+            return await widget.callFlutterLocal
+                .getFixAndroidCurrentPage(call.arguments);
           return await widget.callFlutterLocal.getCurrentPage(call.arguments);
         case 'getCurrentPageCount':
           print(call.arguments);
@@ -105,9 +109,11 @@ class CallFlutterLocal {
   final FutureOr<List<Map<String, dynamic>>> Function(int pageNum)
       getCurrentPage;
   final FutureOr<void> Function(int totalCount) getTotalCount;
+  final FutureOr<String> Function(int pageNum) getFixAndroidCurrentPage;
 
   CallFlutterLocal(
       {@required this.getLinePath,
       @required this.getCurrentPage,
-      @required this.getTotalCount});
+      @required this.getTotalCount,
+      @required this.getFixAndroidCurrentPage});
 }
