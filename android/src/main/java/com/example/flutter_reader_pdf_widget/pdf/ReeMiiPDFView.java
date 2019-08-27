@@ -138,13 +138,14 @@ public class ReeMiiPDFView implements PlatformView, MethodChannel.MethodCallHand
                             public void success(Object o) {
                                 Log.v(TAG, "invokeMethod success " + METHOD_GET_CURRENT_PAGE);
                                 Log.v(TAG, "invokeMethod success " + o.toString());
-                                List<Map<String, Object>> params = (List<Map<String, Object>>) o;
-                                List<PathSave> line = new ArrayList<>();
-                                for (Map<String, Object> m : params) {
-                                    Log.e("PDF-Plugin", m.toString());
-                                    line.add(new PathSave(m));
-                                }
-                                mDrawView.setDrawHistory(mGson.toJson(line));
+                                Log.v(TAG, "invokeMethod success " + System.currentTimeMillis());
+//                                List<Map<String, Object>> params = (List<Map<String, Object>>) o;
+//                                List<PathSave> line = new ArrayList<>();
+//                                for (Map<String, Object> m : params) {
+//                                    Log.e("PDF-Plugin", m.toString());
+//                                    line.add(new PathSave(m));
+//                                }
+//                                mDrawView.setDrawHistory(mGson.toJson(line));
                             }
 
                             @Override
