@@ -61,20 +61,20 @@ class _UIReaderPDFWidgetState extends State<UIReaderPDFWidget> {
 
   @override
   Widget build(BuildContext context) {
-    if (defaultTargetPlatform == TargetPlatform.iOS) {
+    if (Platform.isIOS) {
       return UiKitView(
         viewType: _viewType,
         onPlatformViewCreated: _onPlatformViewCreated,
         creationParamsCodec: new StandardMessageCodec(),
         creationParams: widget.param,
       );
-    }
-    return AndroidView(
-      viewType: _viewType,
-      onPlatformViewCreated: _onPlatformViewCreated,
-      creationParamsCodec: new StandardMessageCodec(),
-      creationParams: widget.param,
-    );
+    } else if (Platform.isAndroid)
+      return AndroidView(
+        viewType: _viewType,
+        onPlatformViewCreated: _onPlatformViewCreated,
+        creationParamsCodec: new StandardMessageCodec(),
+        creationParams: widget.param,
+      );
   }
 
   void _onPlatformViewCreated(int id) {
