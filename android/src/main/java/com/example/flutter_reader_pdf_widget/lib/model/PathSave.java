@@ -84,7 +84,7 @@ public class PathSave {
                         (float) end.optDouble("dy", 0D)
                 );
                 moves = obj.optJSONArray("moves");
-                for (int movePos = 0, moveSize = array.length(); movePos < moveSize; ) {
+                for (int movePos = 0, moveSize = moves.length(); movePos < moveSize; ) {
                     move1 = moves.optJSONObject(movePos);
                     movePos++;
                     move2 = moves.optJSONObject(movePos);

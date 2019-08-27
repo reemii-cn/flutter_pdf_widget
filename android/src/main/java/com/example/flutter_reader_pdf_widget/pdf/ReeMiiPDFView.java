@@ -45,7 +45,6 @@ public class ReeMiiPDFView implements PlatformView, MethodChannel.MethodCallHand
     private PDFView mPDFView;
     private DrawSurface mDrawView;
     private int mCurrentPage;
-    private int mLastPage;
 
     private boolean isDrawMode = false;
 
@@ -101,37 +100,36 @@ public class ReeMiiPDFView implements PlatformView, MethodChannel.MethodCallHand
                         mDrawView.drawTMD(canvas, zoom);
                     }
                 })
-                .beforePageChange(new OnPageChangeListener() {
-                    @Override
-                    public void onPageChanged(int page, int pageCount) {
-                        Log.v(TAG, "beforePageChange " + page);
-                        Log.v(TAG, "beforePageChange " + mDrawView.getDrawHistoryList());
-                        mChannel.invokeMethod(METHOD_GET_LINE_PATH, mDrawView.getDrawHistoryList(), new MethodChannel.Result() {
-                            @Override
-                            public void success(Object o) {
-                                Log.v(TAG, "invokeMethod success " + METHOD_GET_LINE_PATH);
-
-                            }
-
-                            @Override
-                            public void error(String s, String s1, Object o) {
-                                Log.v(TAG, "invokeMethod error " + METHOD_GET_LINE_PATH);
-                                Log.v(TAG, "invokeMethod error " + s);
-                                Log.v(TAG, "invokeMethod error " + s1);
-                            }
-
-                            @Override
-                            public void notImplemented() {
-                                Log.v(TAG, "invokeMethod notImplemented " + METHOD_GET_LINE_PATH);
-                            }
-                        });
-                    }
-                })
+//                .beforePageChange(new OnPageChangeListener() {
+//                    @Override
+//                    public void onPageChanged(int page, int pageCount) {
+//                        Log.v(TAG, "beforePageChange " + page);
+//                        Log.v(TAG, "beforePageChange " + mDrawView.getDrawHistoryList());
+//                        mChannel.invokeMethod(METHOD_GET_LINE_PATH, mDrawView.getDrawHistoryList(), new MethodChannel.Result() {
+//                            @Override
+//                            public void success(Object o) {
+//                                Log.v(TAG, "invokeMethod success " + METHOD_GET_LINE_PATH);
+//
+//                            }
+//
+//                            @Override
+//                            public void error(String s, String s1, Object o) {
+//                                Log.v(TAG, "invokeMethod error " + METHOD_GET_LINE_PATH);
+//                                Log.v(TAG, "invokeMethod error " + s);
+//                                Log.v(TAG, "invokeMethod error " + s1);
+//                            }
+//
+//                            @Override
+//                            public void notImplemented() {
+//                                Log.v(TAG, "invokeMethod notImplemented " + METHOD_GET_LINE_PATH);
+//                            }
+//                        });
+//                    }
+//                })
                 .onPageChange(new OnPageChangeListener() {
                     @Override
                     public void onPageChanged(int page, int pageCount) {
                         Log.v(TAG, "onPageChanged " + page);
-                        mLastPage = mCurrentPage;
                         mCurrentPage = page;
 
                         mChannel.invokeMethod(METHOD_GET_CURRENT_PAGE, mCurrentPage, new MethodChannel.Result() {
@@ -173,6 +171,27 @@ public class ReeMiiPDFView implements PlatformView, MethodChannel.MethodCallHand
         switch (methodCall.method) {
             case METHOD_EDIT:
                 isDrawMode = !isDrawMode;
+                if (!isDrawMode) {
+                    mChannel.invokeMethod(METHOD_GET_LINE_PATH, mDrawView.getDrawHistoryList(), new MethodChannel.Result() {
+                        @Override
+                        public void success(Object o) {
+                            Log.v(TAG, "invokeMethod success " + METHOD_GET_LINE_PATH);
+
+                        }
+
+                        @Override
+                        public void error(String s, String s1, Object o) {
+                            Log.v(TAG, "invokeMethod error " + METHOD_GET_LINE_PATH);
+                            Log.v(TAG, "invokeMethod error " + s);
+                            Log.v(TAG, "invokeMethod error " + s1);
+                        }
+
+                        @Override
+                        public void notImplemented() {
+                            Log.v(TAG, "invokeMethod notImplemented " + METHOD_GET_LINE_PATH);
+                        }
+                    });
+                }
                 mDrawView.setIsDrawMode(isDrawMode);
                 result.success(null);
                 break;
