@@ -185,8 +185,8 @@ public class PathSave {
 
         params.put("moves", moves);
 
-        Log.v(TAG, "toMap");
-        Log.v(TAG, params.toString());
+//        Log.v(TAG, "toMap");
+//        Log.v(TAG, params.toString());
         return params;
     }
 
