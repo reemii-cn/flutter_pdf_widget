@@ -10,4 +10,9 @@ public class TwoPointF {
         p1 = new PointF(x1, y1);
         p2 = new PointF(x2, y2);
     }
+
+    public TwoPointF(PointF p1, PointF p2) {
+        this.p1 = p1;
+        this.p2 = p2;
+    }
 }

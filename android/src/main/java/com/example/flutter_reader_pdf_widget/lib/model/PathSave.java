@@ -8,6 +8,10 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.util.Log;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -16,18 +20,19 @@ import java.util.Map;
 public class PathSave {
     private final String TAG = PathSave.class.getSimpleName();
 
-    public PointF start;
+    public PointF start = new PointF(0F, 0F);
 
-    public PointF end;
-    public List<TwoPointF> moves;
+    public PointF end = new PointF(0F, 0F);
+    ;
+    public List<TwoPointF> moves = new ArrayList<>();
 
-    private int paintColor;
-    private int paintWidth;
-    private boolean isEraser;
+    private int paintColor = Color.BLACK;
+    private int paintWidth = 5;
+    private boolean isEraser = false;
 
     //绘制区域的匡高
-    public float mStandardW;
-    public float mStandardH;
+    public float mStandardW = 0F;
+    public float mStandardH = 0F;
 
     //偏移
     private float oX = 0F;
@@ -38,6 +43,65 @@ public class PathSave {
         start = new PointF(0f, 0f);
         end = new PointF(0f, 0f);
         moves = new ArrayList<>();
+    }
+
+    public static List<PathSave> fromJSON(String json) {
+        List<PathSave> result = new ArrayList<>();
+        try {
+            JSONArray array = new JSONArray(json);
+            JSONArray moves;
+            PathSave ps;
+            String color;
+            JSONObject start, end, obj, move1, move2;
+
+            for (int pos = 0, size = array.length(); pos < size; pos++) {
+                ps = new PathSave();
+                obj = array.optJSONObject(pos);
+
+                color = obj.optString("paintColor");
+                if (color.startsWith("-")) {
+                    ps.paintColor = Color.parseColor("#".concat(color.substring(1)));
+                } else if (color.startsWith("#")) {
+                    ps.paintColor = Color.parseColor(color);
+                } else {
+                    ps.paintColor = Color.parseColor("#".concat(color));
+                }
+
+                ps.paintWidth = (int) obj.optDouble("paintWidth", 0D);
+                ps.mStandardH = (int) obj.optDouble("mStandardH", 0D);
+                ps.mStandardW = (int) obj.optDouble("mStandardW", 0D);
+                ps.isEraser = obj.optBoolean("isEraser");
+                ps.oX = (float) obj.optDouble("oX", 0D);
+                ps.oY = (float) obj.optDouble("oY", 0D);
+                start = obj.optJSONObject("start");
+                ps.start = new PointF(
+                        (float) start.optDouble("dx", 0D),
+                        (float) start.optDouble("dy", 0D)
+                );
+                end = obj.optJSONObject("end");
+                ps.end = new PointF(
+                        (float) end.optDouble("dx", 0D),
+                        (float) end.optDouble("dy", 0D)
+                );
+                moves = obj.optJSONArray("moves");
+                for (int movePos = 0, moveSize = array.length(); movePos < moveSize; ) {
+                    move1 = moves.optJSONObject(movePos);
+                    movePos++;
+                    move2 = moves.optJSONObject(movePos);
+                    movePos++;
+                    ps.moves.add(
+                            new TwoPointF(
+                                    new PointF((float) move1.optDouble("dx", 0D), (float) move1.optDouble("dy", 0D)),
+                                    new PointF((float) move2.optDouble("dx", 0D), (float) move2.optDouble("dy", 0D))
+                            )
+                    );
+                }
+                result.add(ps);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return result;
     }
 
     public PathSave(Map<String, Object> params) {
@@ -88,7 +152,6 @@ public class PathSave {
     public Map<String, Object> toMap() {
         Map<String, Object> params = new HashMap<>();
 
-        Log.v(TAG, String.format("#%06X", (0xFFFFFF & paintColor)));
         params.put("paintColor", String.format("%06X", (0xFFFFFF & paintColor)));
         params.put("paintWidth", paintWidth);
         params.put("mStandardH", mStandardH);

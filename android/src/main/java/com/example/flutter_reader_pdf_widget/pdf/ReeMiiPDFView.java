@@ -105,6 +105,7 @@ public class ReeMiiPDFView implements PlatformView, MethodChannel.MethodCallHand
                     @Override
                     public void onPageChanged(int page, int pageCount) {
                         Log.v(TAG, "beforePageChange " + page);
+                        Log.v(TAG, "beforePageChange " + mDrawView.getDrawHistoryList());
                         mChannel.invokeMethod(METHOD_GET_LINE_PATH, mDrawView.getDrawHistoryList(), new MethodChannel.Result() {
                             @Override
                             public void success(Object o) {
@@ -139,13 +140,8 @@ public class ReeMiiPDFView implements PlatformView, MethodChannel.MethodCallHand
                                 Log.v(TAG, "invokeMethod success " + METHOD_GET_CURRENT_PAGE);
                                 Log.v(TAG, "invokeMethod success " + o.toString());
                                 Log.v(TAG, "invokeMethod success " + System.currentTimeMillis());
-//                                List<Map<String, Object>> params = (List<Map<String, Object>>) o;
-//                                List<PathSave> line = new ArrayList<>();
-//                                for (Map<String, Object> m : params) {
-//                                    Log.e("PDF-Plugin", m.toString());
-//                                    line.add(new PathSave(m));
-//                                }
-//                                mDrawView.setDrawHistory(mGson.toJson(line));
+
+                                mDrawView.setDrawHistory(mGson.toJson(PathSave.fromJSON((String) o)));
                             }
 
                             @Override
